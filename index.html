@@ -16,6 +16,7 @@ button.g{background:#fff;border:1px solid #d8dce3;font-weight:600}
 <button id="stampa">🖨 Stampa</button>
 <div id="st"></div>
 <button id="cambia" class="g">Cambia stampante</button>
+<div id="aiuto" style="display:none;background:#fff;border:1px solid #d8dce3;border-radius:10px;padding:12px;font-size:.95rem">Per non scegliere la stampante ogni volta, su Chrome del telefono attiva questa impostazione una volta sola:<br><b>1.</b> scrivi nella barra indirizzi <b>chrome://flags/#enable-web-bluetooth-new-permissions-backend</b><br><b>2.</b> imposta <b>Enabled</b> e tocca <b>Riavvia</b>.<br>Poi scegli la stampante un'ultima volta: dopo si collega da sola.</div>
 </main>
 <script>
 const $ = id => document.getElementById(id);
@@ -71,5 +72,6 @@ async function stampa(forza){
 }
 $("stampa").onclick = () => stampa(false);
 $("cambia").onclick = () => { try{ localStorage.removeItem("stampante-id"); }catch(e){} stampa(true); };
-if(righe.length && navigator.bluetooth && navigator.bluetooth.getDevices && localStorage.getItem("stampante-id")) stampa(false);
+if(!(navigator.bluetooth && navigator.bluetooth.getDevices)) $("aiuto").style.display = "block";
+else if(righe.length) navigator.bluetooth.getDevices().then(l=>{ if(l.length) stampa(false); else $("aiuto").style.display = "block"; }).catch(()=>{ $("aiuto").style.display = "block"; });
 </script></body></html>
